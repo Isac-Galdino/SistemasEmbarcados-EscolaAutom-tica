@@ -1,10 +1,23 @@
-<!doctype html>
+!doctype html>
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sala Inteligente</title>
 <meta name="description" content="Sensor de presença e aviso de intervalo para sala de aula, controlados por um Arduino.">
+ 
+<!-- Aplica o tema salvo (ou o do sistema) antes de desenhar a página, para não piscar -->
+<script>
+  (function () {
+    var t = null;
+    try { t = localStorage.getItem('sala.tema'); } catch (e) {}
+    if (t !== 'claro' && t !== 'escuro') {
+      t = matchMedia('(prefers-color-scheme: dark)').matches ? 'escuro' : 'claro';
+    }
+    document.documentElement.dataset.tema = t;
+  })();
+</script>
+ 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&display=swap" rel="stylesheet">
@@ -46,14 +59,14 @@
     --foco: var(--giz);
   }
   :focus-visible { outline: 3px solid var(--foco); outline-offset: 3px; }
-
+ 
   h1, h2, h3 { margin: 0; line-height: 1.05; letter-spacing: -0.02em; }
   h1 { font-size: clamp(3.2rem, 9vw, 7rem); font-weight: 800; font-stretch: 75%; line-height: .92; margin-bottom: 24px; }
   h2 { font-size: clamp(1.9rem, 3.6vw, 2.75rem); font-weight: 700; font-stretch: 85%; margin-bottom: 28px; }
   h2::after { content: ""; display: block; width: 56px; height: 5px; border-radius: 3px; background: var(--sino); margin-top: 14px; }
   h3 { font-size: 1.25rem; font-weight: 700; margin-bottom: 8px; }
   p { margin: 0 0 1em; }
-
+ 
   /* botões */
   .btn {
     font: inherit; font-weight: 600; line-height: 1.2;
@@ -72,7 +85,7 @@
   .btn:disabled { opacity: .45; cursor: not-allowed; }
   .btn.texto { border: 0; padding: .3em .2em; text-decoration: underline; text-underline-offset: 3px; }
   .btn.texto:hover:not(:disabled) { transform: none; }
-
+ 
   /* topo e hero */
   .topo { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; padding-block: 22px; border-bottom: 1px solid rgba(238, 242, 232, .14); }
   .topo .marca { font-weight: 700; font-stretch: 80%; font-size: 1.1rem; }
@@ -84,13 +97,13 @@
   .lead { font-size: 1.3rem; line-height: 1.35; max-width: 30ch; margin-bottom: 16px; }
   .apoio { max-width: 46ch; color: var(--giz-suave); margin-bottom: 32px; }
   .acoes { display: flex; gap: 12px; flex-wrap: wrap; }
-
+ 
   .relogio { margin: 0; justify-self: center; width: min(100%, 400px); }
   .relogio svg { width: 100%; height: auto; display: block; filter: drop-shadow(0 18px 28px rgba(0, 0, 0, .35)); }
   .relogio figcaption { margin-top: 18px; text-align: center; color: var(--giz); min-height: 3em; }
   .relogio .legenda { display: block; margin-top: 4px; font-size: .9rem; color: var(--giz-suave); }
   .bolinha { display: inline-block; width: .7em; height: .7em; border-radius: 50%; background: var(--sino); margin-right: .4em; vertical-align: baseline; }
-
+ 
   .bezel { fill: var(--quadro2); stroke: #3b6252; stroke-width: 1; }
   .face { fill: var(--giz); }
   .tique { stroke: var(--suave); stroke-width: 1.5; }
@@ -103,7 +116,7 @@
   .aro { fill: none; stroke: transparent; stroke-width: 6; }
   #dial.tocando .aro { stroke: var(--sino); animation: piscar .6s steps(1) infinite; }
   @keyframes piscar { 50% { stroke: transparent; } }
-
+ 
   /* sistema */
   .sec { padding-block: 72px; }
   .tres { display: grid; grid-template-columns: repeat(3, 1fr); counter-reset: passo; }
@@ -118,7 +131,7 @@
     margin-right: .6em; vertical-align: .08em;
   }
   .tres p { color: var(--suave); max-width: 34ch; }
-
+ 
   /* painel */
   .painel { background: var(--papel); border-block: 2px solid var(--tinta); }
   .conexao { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 8px; }
@@ -128,7 +141,7 @@
   body[data-modo="demo"] .estado-conexao::before { background: var(--ocupada); box-shadow: 0 0 0 4px rgba(99, 226, 169, .3); }
   .ajuda { color: var(--suave); font-size: .95rem; max-width: 70ch; }
   .aviso { color: var(--erro); font-weight: 600; }
-
+ 
   .faixa {
     display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 32px; align-items: center;
     padding: 32px; border-radius: 18px; margin-block: 24px 40px;
@@ -146,7 +159,7 @@
   .leituras dt { color: var(--giz-suave); font-size: .95rem; }
   .leituras dd { margin: 0; font-size: clamp(1.8rem, 3.4vw, 2.6rem); font-weight: 700; font-stretch: 85%; line-height: 1.1; }
   .leituras dd + dd { font-size: 1rem; font-weight: 400; color: var(--giz-suave); }
-
+ 
   .duas { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; }
   .bloco {
     background: #fff; border: 1px solid var(--linha); border-top: 5px solid var(--quadro);
@@ -154,7 +167,7 @@
     box-shadow: 0 12px 24px -20px rgba(22, 35, 29, .6);
   }
   .bloco h3 { margin-bottom: 14px; }
-
+ 
   .horarios { list-style: none; margin: 0 0 14px; padding: 0; }
   .horarios li { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--linha); }
   .horarios .hora { font-size: 1.9rem; font-weight: 700; font-stretch: 85%; }
@@ -170,7 +183,7 @@
   .botoes { display: flex; gap: 10px; flex-wrap: wrap; }
   .barra-demo { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin: 0 0 24px; padding: 12px 14px; border: 2px dashed var(--sino); border-radius: 12px; background: #fff8e6; }
   .barra-demo span { font-weight: 600; margin-right: 6px; }
-
+ 
   .log { list-style: none; margin: 0; padding: 0; max-height: 380px; overflow: auto; border-bottom: 1px solid var(--linha); }
   .log li { display: grid; grid-template-columns: 5.2em 1fr; gap: 10px; padding: 7px 0 7px 10px; border-bottom: 1px solid var(--linha); border-left: 4px solid transparent; animation: entra .25s ease-out; }
   .log li:last-child { border-bottom: 0; }
@@ -178,7 +191,7 @@
   .log li.toque { border-left-color: var(--sino); font-weight: 600; background: #fff8e6; }
   .log li.erro { color: var(--erro); border-left-color: var(--erro); }
   @keyframes entra { from { opacity: 0; transform: translateY(-6px); } }
-
+ 
   /* montagem */
   table { border-collapse: collapse; width: 100%; margin-bottom: 8px; }
   caption { text-align: left; color: var(--suave); padding-bottom: 10px; }
@@ -193,9 +206,9 @@
   code, pre { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: .92rem; }
   pre { background: var(--quadro); color: var(--giz); padding: 16px; border-radius: 12px; overflow: auto; box-shadow: 0 12px 24px -18px rgba(22, 35, 29, .8); }
   td code { background: rgba(22, 35, 29, .08); padding: .1em .35em; border-radius: 4px; }
-
+ 
   footer { padding-block: 32px 48px; color: var(--suave); border-top: 1px solid var(--linha); }
-
+ 
   @media (max-width: 860px) {
     .hero-grade { grid-template-columns: 1fr; padding-bottom: 56px; }
     .tres { grid-template-columns: 1fr; gap: 28px; }
@@ -213,18 +226,123 @@
     #dial.tocando .aro { stroke: var(--sino); }
   }
 </style>
+ 
+<style id="tema-wokwi">
+  /* ===== Tema claro: é o padrão do CSS acima ===== */
+  html[data-tema="claro"] { color-scheme: light; }
+ 
+  /* ===== Tema escuro ===== */
+  html[data-tema="escuro"] {
+    color-scheme: dark;
+    --parede: #111a13;
+    --papel: #18231a;
+    --tinta: #f1f0df;
+    --suave: #bdc8b8;
+    --linha: #3b4a3d;
+    --quadro: #142017;
+    --quadro2: #213729;
+    --giz: #f1f0df;
+    --giz-suave: #b4c4b5;
+    --sino: #f2b230;
+    --ocupada: #63e2a9;
+    --vazia: #8fa399;
+    --erro: #ff8d82;
+    --foco: #f1f0df;
+  }
+  :where(html[data-tema="escuro"]) .painel { background: #151f17; border-color: var(--linha); }
+  :where(html[data-tema="escuro"]) .bloco {
+    background: #1b281e;
+    border-color: var(--linha);
+    border-top-color: var(--sino);
+    color: var(--tinta);
+  }
+  :where(html[data-tema="escuro"]) .bloco h3,
+  :where(html[data-tema="escuro"]) .bloco label,
+  :where(html[data-tema="escuro"]) .bloco .hora { color: var(--tinta); }
+  :where(html[data-tema="escuro"]) .tres > div { border-color: var(--linha); }
+  :where(html[data-tema="escuro"]) .btn { border-color: #d8dfd2; color: var(--tinta); }
+  :where(html[data-tema="escuro"]) .btn:hover:not(:disabled) { background: rgba(241,240,223,.10); }
+  :where(html[data-tema="escuro"]) .escuro .btn { border-color: var(--giz); color: var(--giz); }
+  :where(html[data-tema="escuro"]) input[type="time"] {
+    background: #101811; color: var(--tinta); border-color: #879889;
+  }
+  :where(html[data-tema="escuro"]) .barra-demo { background: #2a2618; border-color: var(--sino); color: var(--tinta); }
+  :where(html[data-tema="escuro"]) .log li { border-color: var(--linha); }
+  :where(html[data-tema="escuro"]) .log li.toque { background: #332b17; }
+  :where(html[data-tema="escuro"]) th,
+  :where(html[data-tema="escuro"]) td { border-color: var(--linha); }
+  :where(html[data-tema="escuro"]) th { border-bottom-color: var(--tinta); }
+  :where(html[data-tema="escuro"]) tbody tr:hover { background: rgba(241,240,223,.06); }
+  :where(html[data-tema="escuro"]) td code { background: rgba(241,240,223,.10); }
+  :where(html[data-tema="escuro"]) details,
+  :where(html[data-tema="escuro"]) footer { border-color: var(--linha); }
+  :where(html[data-tema="escuro"]) .estado-conexao::before { background: #839587; }
+  :where(html[data-tema="escuro"]) body[data-modo="serial"] .estado-conexao::before,
+  :where(html[data-tema="escuro"]) body[data-modo="demo"] .estado-conexao::before { background: var(--ocupada); }
+ 
+  /* ===== Seletor de tema no topo ===== */
+  .topo-dir { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+  .tema-escolha {
+    display: inline-flex; gap: 2px; padding: 3px;
+    border: 2px solid var(--giz-suave); border-radius: 999px;
+  }
+  .tema-escolha button {
+    font: inherit; font-size: .92rem; font-weight: 600; line-height: 1;
+    padding: .5em .95em; border: 0; border-radius: 999px;
+    background: transparent; color: var(--giz); cursor: pointer;
+    transition: background-color .15s, color .15s;
+  }
+  .tema-escolha button:hover { background: rgba(238, 242, 232, .14); }
+  .tema-escolha button[aria-pressed="true"] { background: var(--sino); color: #1a1405; }
+ 
+  /* ===== Relógio: a face é sempre clara, então ponteiros e números têm cor fixa ===== */
+  .tique { stroke: #4b5c53; }
+  .tique.grande, .ponteiro { stroke: #16231d; }
+  .ponteiro.s { stroke: var(--sino); }
+  .num, .centro { fill: #16231d; }
+ 
+  /* ===== Seção do Wokwi: escura nos dois temas ===== */
+  .simulacao-wokwi { padding-block: 72px; background: #111a13; color: var(--giz); }
+  .simulacao-wokwi h2 { max-width: 780px; font-size: clamp(2.5rem, 6vw, 4.2rem); }
+  .simulacao-wokwi h2::after { display: none; }
+  .simulacao-wokwi .intro-wokwi {
+    max-width: 75ch; color: var(--giz-suave); margin: 18px 0 34px;
+  }
+  .moldura-wokwi {
+    overflow: hidden; border: 1px solid #465348; border-radius: 12px;
+    background: #242424; box-shadow: 0 22px 55px rgba(0,0,0,.28);
+  }
+  .moldura-wokwi iframe {
+    display: block; width: 100%; height: min(76vh, 720px); min-height: 520px;
+    border: 0; background: #242424;
+  }
+  .nota-wokwi { color: var(--giz-suave); font-size: .92rem; margin-top: 14px; }
+  .nota-wokwi code { color: var(--sino); }
+  @media (max-width: 600px) {
+    .simulacao-wokwi { padding-block: 52px; }
+    .moldura-wokwi iframe { min-height: 420px; height: 65vh; }
+  }
+</style>
+ 
 </head>
 <body data-modo="nenhum">
-
+ 
 <header class="hero escuro">
   <div class="miolo">
     <div class="topo">
       <span class="marca">Sala Inteligente</span>
-      <nav aria-label="Seções da página">
-        <a href="#sistema">O sistema</a>
-        <a href="#painel">Painel</a>
-        <a href="#montagem">Montagem</a>
-      </nav>
+      <div class="topo-dir">
+        <nav aria-label="Seções da página">
+          <a href="#sistema">O sistema</a>
+          <a href="#painel">Painel</a>
+          <a href="#simulacao">Simulação</a>
+          <a href="#montagem">Montagem</a>
+        </nav>
+        <div class="tema-escolha" role="group" aria-label="Tema do site">
+          <button type="button" data-escolher-tema="claro" aria-pressed="false">Claro</button>
+          <button type="button" data-escolher-tema="escuro" aria-pressed="false">Escuro</button>
+        </div>
+      </div>
     </div>
     <div class="hero-grade">
       <div>
@@ -256,7 +374,7 @@
     </div>
   </div>
 </header>
-
+ 
 <main>
   <section id="sistema" class="sec">
     <div class="miolo">
@@ -277,11 +395,11 @@
       </div>
     </div>
   </section>
-
+ 
   <section id="painel" class="sec painel">
     <div class="miolo">
       <h2>Painel de controle</h2>
-
+ 
       <div class="conexao">
         <button id="btnSerial" class="btn prim" type="button">Conectar o Arduino pela USB</button>
         <button id="btnDemo" class="btn" type="button">Testar em modo demonstração</button>
@@ -290,7 +408,7 @@
       </div>
       <p class="ajuda">Funciona no Chrome ou no Edge, no computador. O navegador pede para você escolher a porta do Arduino. No modo demonstração, o site simula a placa e você vê tudo funcionando sem hardware.</p>
       <p id="avisoSerial" class="aviso" hidden>Este navegador não permite acessar a porta USB. Abra o site no Chrome ou no Edge, ou use o modo demonstração.</p>
-
+ 
       <div id="faixa" class="faixa escuro" data-estado="off">
         <div class="pres">
           <span class="farol" aria-hidden="true"></span>
@@ -310,13 +428,13 @@
           <dd id="proxSub"></dd>
         </dl>
       </div>
-
+ 
       <div id="barraDemo" class="barra-demo" hidden>
         <span>Demonstração:</span>
         <button id="btnMov" class="btn" type="button">Simular movimento na sala</button>
         <button id="btnPular" class="btn" type="button">Avançar para 5 s antes do próximo intervalo</button>
       </div>
-
+ 
       <div class="duas">
         <section class="bloco" aria-labelledby="tHorarios">
           <h3 id="tHorarios">Horários de intervalo</h3>
@@ -330,7 +448,7 @@
           <p id="msgInts" class="msg" role="status"></p>
           <p class="ajuda">Os horários ficam salvos neste navegador e são enviados ao Arduino quando você conecta. A placa guarda até 6.</p>
           <p id="syncInts" class="sync"></p>
-
+ 
           <fieldset id="controles" disabled>
             <label class="opcao"><input id="armar" type="checkbox" checked> Avisar automaticamente nos horários</label>
             <div class="botoes">
@@ -340,7 +458,7 @@
             </div>
           </fieldset>
         </section>
-
+ 
         <section class="bloco" aria-labelledby="tRegistro">
           <h3 id="tRegistro">Registro de eventos</h3>
           <p id="logVazio" class="vazio">Os eventos da sala aparecem aqui.</p>
@@ -349,7 +467,34 @@
       </div>
     </div>
   </section>
-
+ 
+ 
+  <section id="simulacao" class="simulacao-wokwi">
+    <div class="miolo">
+      <h2>Veja o circuito em funcionamento.</h2>
+      <p class="intro-wokwi">
+        Abaixo está a simulação interativa do protótipo Sala Inteligente no Wokwi.
+        Clique em <strong>Start Simulation</strong> para executar o circuito e
+        acompanhar o funcionamento dos componentes virtuais.
+      </p>
+      <div class="moldura-wokwi">
+        <iframe
+          src="https://wokwi.com/projects/SEU_ID_DO_PROJETO?embed=1"
+          title="Simulação do circuito Sala Inteligente no Wokwi"
+          loading="lazy"
+          allow="usb; fullscreen"
+          allowfullscreen>
+        </iframe>
+      </div>
+      <p class="nota-wokwi">
+        Para exibir seu circuito, substitua <code>SEU_ID_DO_PROJETO</code>
+        no endereço do iframe pelo identificador do seu projeto publicado no Wokwi.
+        Use uma simulação compatível com o Arduino Uno e com os componentes listados
+        na seção Montagem.
+      </p>
+    </div>
+  </section>
+ 
   <section id="montagem" class="sec">
     <div class="miolo">
       <h2>Montagem</h2>
@@ -366,7 +511,7 @@
           <tr><td>Cabo USB</td><td>Arduino no computador com Chrome ou Edge</td><td>Alimenta a placa e leva os dados até o site.</td></tr>
         </tbody>
       </table>
-
+ 
       <details>
         <summary>Como o site e o Arduino conversam</summary>
         <p style="margin-top:16px">A comunicação é por texto, a 115200 baud, uma linha por mensagem. O site envia comandos e o Arduino responde com uma linha de estado em JSON.</p>
@@ -386,21 +531,21 @@
     </div>
   </section>
 </main>
-
+ 
 <footer>
   <div class="miolo">Sala Inteligente. Projeto de sistema embarcado com Arduino.</div>
 </footer>
-
+ 
 <script>
 (() => {
   'use strict';
-
+ 
   const $ = (id) => document.getElementById(id);
   const esperar = (ms) => new Promise((r) => setTimeout(r, ms));
   const p2 = (n) => String(n).padStart(2, '0');
   const MAX_INTS = 6;
   const BAUD = 115200;
-
+ 
   /* ---------- formatação ---------- */
   const segLocal = () => { const d = new Date(); return d.getHours() * 3600 + d.getMinutes() * 60 + d.getSeconds(); };
   const hms = (seg) => { seg = ((seg % 86400) + 86400) % 86400; return `${p2(Math.floor(seg / 3600))}:${p2(Math.floor(seg % 3600 / 60))}:${p2(seg % 60)}`; };
@@ -410,16 +555,16 @@
     return h > 0 ? `${h} h ${p2(m)} min` : `${m} min ${p2(s)} s`;
   };
   const ha = (seg) => seg < 60 ? `${seg} s` : seg < 3600 ? `${Math.floor(seg / 60)} min` : `${Math.floor(seg / 3600)} h ${Math.floor(seg % 3600 / 60)} min`;
-
+ 
   /* ---------- estado ---------- */
   const estado = { modo: null, presenca: false, semMov: -1, hora: -1, prox: -1, armado: true, buzina: false, intsArduino: null };
   let recebeuPrimeiro = false;
-
+ 
   // Horários padrão: 09:00, 11:50 e 14:40 (minutos desde a meia-noite).
   // A chave do armazenamento mudou (v2) para que a lista antiga salva no navegador não sobreponha estes horários.
   const CHAVE = 'sala.intervalos.v2';
   const PADRAO = [540, 710, 880];
-
+ 
   function carregarPlano() {
     try {
       const v = JSON.parse(localStorage.getItem(CHAVE));
@@ -431,7 +576,7 @@
   }
   const salvarPlano = () => { try { localStorage.setItem(CHAVE, JSON.stringify(plano)); } catch (e) { /* ignora */ } };
   let plano = carregarPlano();
-
+ 
   /* ---------- registro de eventos ---------- */
   function registrar(texto, tipo) {
     const li = document.createElement('li');
@@ -446,12 +591,12 @@
     while (lista.children.length > 60) lista.lastChild.remove();
     $('logVazio').hidden = true;
   }
-
+ 
   /* ---------- relógio de parede (SVG) ---------- */
   const NS = 'http://www.w3.org/2000/svg';
   const criar = (nome, attrs) => { const e = document.createElementNS(NS, nome); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; };
   const polar = (r, graus) => { const a = (graus - 90) * Math.PI / 180; return [150 + r * Math.cos(a), 150 + r * Math.sin(a)]; };
-
+ 
   function montarDial() {
     const g = $('dialFixo');
     for (let i = 0; i < 60; i++) {
@@ -467,7 +612,7 @@
       g.append(t);
     }
   }
-
+ 
   function atualizarDial(seg) {
     const h = (seg / 3600) % 12, m = (seg % 3600) / 60, s = seg % 60;
     $('ponteiroH').setAttribute('transform', `rotate(${h * 30} 150 150)`);
@@ -480,7 +625,7 @@
       marcas.append(criar('circle', { cx: x, cy: y, r: 6, class: 'sino' }));
     });
   }
-
+ 
   /* ---------- tela ---------- */
   function render() {
     const on = estado.modo !== null;
@@ -491,17 +636,17 @@
     $('btnSair').hidden = !on;
     $('barraDemo').hidden = estado.modo !== 'demo';
     $('estadoConexao').textContent = estado.modo === 'serial' ? 'Conectado ao Arduino' : estado.modo === 'demo' ? 'Modo demonstração' : 'Desconectado';
-
+ 
     $('faixa').dataset.estado = !on ? 'off' : estado.presenca ? 'ocupada' : 'vazia';
     $('presTitulo').textContent = !on ? 'Sem conexão' : estado.presenca ? 'Sala ocupada' : 'Sala vazia';
     $('presSub').textContent = !on ? 'Conecte o Arduino ou abra o modo demonstração.'
       : estado.semMov < 0 ? 'Nenhum movimento detectado ainda.'
       : `Último movimento há ${ha(estado.semMov)}.`;
     $('sinoAviso').hidden = !(on && estado.buzina);
-
+ 
     const semHora = on && estado.hora < 0;
     $('horaArduino').textContent = !on ? '—' : semHora ? 'sem hora' : hms(estado.hora);
-
+ 
     let proxTxt = '—', proxSub = '';
     if (on && estado.hora >= 0 && estado.prox >= 0) {
       proxTxt = hm(Math.floor(((estado.hora + estado.prox) % 86400) / 60));
@@ -513,19 +658,19 @@
     }
     $('proxHora').textContent = proxTxt;
     $('proxSub').textContent = proxSub;
-
+ 
     if (on) $('armar').checked = estado.armado;
-
+ 
     const igual = estado.intsArduino && estado.intsArduino.length === plano.length && estado.intsArduino.every((v, i) => v === plano[i]);
     $('syncInts').textContent = !on ? '' : igual ? 'O Arduino está com esta mesma lista.' : 'Enviando a lista ao Arduino…';
-
+ 
     const horaDial = on && estado.hora >= 0 ? estado.hora : segLocal();
     atualizarDial(horaDial);
     $('dial').classList.toggle('tocando', on && estado.buzina);
     $('legendaDial').textContent = proxTxt !== '—' ? `Próximo intervalo às ${proxTxt}, ${proxSub}`
       : on && estado.hora >= 0 ? 'Relógio do Arduino' : 'Hora do computador';
   }
-
+ 
   function renderPlano() {
     const ul = $('listaInts');
     ul.replaceChildren();
@@ -548,7 +693,7 @@
     });
     $('semInts').hidden = plano.length > 0;
   }
-
+ 
   /* ---------- envio de comandos ---------- */
   let enviar = async () => {};
   async function comando(txt) {
@@ -556,7 +701,7 @@
     catch (e) { registrar(`Falha ao enviar ${txt.split('=')[0]}: ${e.message}`, 'erro'); }
   }
   const enviarPlano = () => comando('INTS=' + plano.map(hm).join(','));
-
+ 
   async function sincronizarTudo(pausa) {
     const passos = [
       'HORA=' + hms(segLocal()),
@@ -569,7 +714,7 @@
       await esperar(pausa);
     }
   }
-
+ 
   /* ---------- status recebido (Arduino ou demonstração) ---------- */
   function aplicarStatus(o) {
     if (!estado.modo) return;
@@ -581,7 +726,7 @@
     estado.armado = !!o.armado;
     estado.buzina = !!o.buzina;
     estado.intsArduino = Array.isArray(o.ints) ? o.ints : [];
-
+ 
     if (!recebeuPrimeiro) {
       recebeuPrimeiro = true;
       if (estado.modo === 'serial') registrar('O Arduino respondeu.');
@@ -592,11 +737,11 @@
     }
     render();
   }
-
+ 
   /* ---------- conexão pela porta USB (Web Serial) ---------- */
   let porta = null, leitor = null, escritor = null, fimDaLeitura = null;
   const codificador = new TextEncoder();
-
+ 
   async function conectarSerial() {
     if (!('serial' in navigator)) { $('avisoSerial').hidden = false; return; }
     try {
@@ -619,7 +764,7 @@
     await sincronizarTudo(250);
     if (estado.modo === 'serial') registrar('Hora e horários enviados ao Arduino.');
   }
-
+ 
   async function iniciarLeitura() {
     const decodificador = new TextDecoderStream();
     fimDaLeitura = porta.readable.pipeTo(decodificador.writable).catch(() => {});
@@ -643,7 +788,7 @@
       try { leitor.releaseLock(); } catch (e) { /* já liberado */ }
     }
   }
-
+ 
   function tratarLinha(l) {
     if (l[0] === '{') {
       try { aplicarStatus(JSON.parse(l)); }
@@ -652,7 +797,7 @@
       registrar('Arduino: ' + l);
     }
   }
-
+ 
   async function fecharSerial() {
     try { if (leitor) await leitor.cancel(); } catch (e) { /* ignora */ }
     try { if (fimDaLeitura) await fimDaLeitura; } catch (e) { /* ignora */ }
@@ -660,7 +805,7 @@
     try { if (porta) await porta.close(); } catch (e) { /* ignora */ }
     porta = leitor = escritor = fimDaLeitura = null;
   }
-
+ 
   async function desconectar(motivo) {
     const modo = estado.modo;
     if (!modo) return;
@@ -672,13 +817,13 @@
     registrar(motivo || 'Desconectado.', motivo ? 'erro' : undefined);
     render();
   }
-
+ 
   if ('serial' in navigator) {
     navigator.serial.addEventListener('disconnect', (ev) => {
       if (ev.target === porta) desconectar('O cabo USB foi desconectado.');
     });
   }
-
+ 
   /* ---------- modo demonstração: simula a placa ---------- */
   const sim = {
     timer: null, hora: 0, ints: [], armado: true, buzina: false, buzinaAte: 0,
@@ -748,7 +893,7 @@
       });
     },
   };
-
+ 
   function iniciarDemo() {
     if (estado.modo) return;
     enviar = async (txt) => sim.comando(txt);
@@ -759,7 +904,7 @@
     sim.iniciar();
     sincronizarTudo(50);
   }
-
+ 
   /* ---------- botões e formulário ---------- */
   $('btnSerial').addEventListener('click', conectarSerial);
   $('btnDemo').addEventListener('click', iniciarDemo);
@@ -775,7 +920,7 @@
   $('btnPular').addEventListener('click', () => {
     if (!sim.pular()) registrar('Adicione um horário de intervalo antes de avançar o relógio.', 'erro');
   });
-
+ 
   $('formInts').addEventListener('submit', (ev) => {
     ev.preventDefault();
     const v = $('novoHorario').value;
@@ -791,7 +936,20 @@
     $('novoHorario').value = '';
     salvarPlano(); renderPlano(); render(); enviarPlano();
   });
-
+ 
+  /* ---------- tema claro/escuro ---------- */
+  const botoesTema = document.querySelectorAll('[data-escolher-tema]');
+  function marcarTema(t) {
+    document.documentElement.dataset.tema = t;
+    botoesTema.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.escolherTema === t)));
+  }
+  botoesTema.forEach((b) => b.addEventListener('click', () => {
+    const t = b.dataset.escolherTema;
+    marcarTema(t);
+    try { localStorage.setItem('sala.tema', t); } catch (e) { /* ignora */ }
+  }));
+  marcarTema(document.documentElement.dataset.tema || 'escuro');
+ 
   /* ---------- início ---------- */
   if (!('serial' in navigator)) {
     $('avisoSerial').hidden = false;
